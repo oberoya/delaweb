@@ -1,0 +1,40 @@
+.signup-window {
+    width: 280px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -140px 0 0 -150px;
+    border-radius: 5%;
+    border: 1px solid #dddddd;
+    padding: 10px;
+}
+.auth{
+    width: 450px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -200px 0 0 -225px;
+    border-radius: 5%;
+    border: 1px solid #dddddd;
+    padding: 10px;
+}
+.g-recaptcha {
+    margin: 10px 0 20px 0;
+}
+.form-flex{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: stretch;
+    height: 100%;
+}
+.buttons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.buttons > button {
+    margin-right: 15px;
+}
