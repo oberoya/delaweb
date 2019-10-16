@@ -13,18 +13,19 @@
 </head>
     <body>
         <?php
-            $_SESSION['countTrying'] = 0;
+            $_SESSION['countTrying'] = 0;// Сессионный счетчик неправильных вводов
 
-            session_start();
-            require_once ('connect_db.php');
-            if(isset($_SESSION["session_email"]) && isset($_SESSION["session_name"])) { 
-                header("Location: userpage.php"); 				
-            } 
-            if (isset($_POST["login"])) { 
-                if(!empty($_POST['email']) && !empty($_POST['password'])) {
+            session_start();// Начало сессии
+            require_once ('connect_db.php');//Подключение к файлу, которые отвечает за подключение к бд
+            if(isset($_SESSION["session_email"]) && isset($_SESSION["session_name"])) { //Если установлены сессионные переменные почты и имени
+                header("Location: userpage.php"); // Если установлены, то переходим на страницу пользователя			
+            } //т.к. не установлены переменные продолжаем разговор
+            if (isset($_POST["login"])) { //Если по методу пост name="login", идем дальше (else говорим, что ничего не происходило)
+                if(!empty($_POST['email']) && !empty($_POST['password'])) {// Если в input c name="email" and name="password" есть что-то,
+                                                                           //то идем дальше (else говорим, что поле(-я) пустые 
                     
-                    if ($_SESSION['countTrying'] >= 3) {
-                        $secret = "6Lcmmr0UAAAAAHaqrp_eE6S6xBXM39ouUbYGAZTM";
+                    if ($_SESSION['countTrying'] >= 3) { // Производим проверку на количество неверхных вводов данных для вывода капшки
+                        $secret = "6Lcmmr0UAAAAAHaqrp_eE6S6xBXM39ouUbYGAZTM";               //(else идем дальше без капшки)
                         $response = null;
                         $reCaptcha = new ReCaptcha($secret);
                     
@@ -46,23 +47,25 @@
                         
                         }
                     }
-                    $email = htmlspecialchars($_POST['email']);
+                    $email = htmlspecialchars($_POST['email']);// В $mail присваиваем значение с name="email" и дальше по аналогии
                     $password = htmlspecialchars($_POST['password']);
-                    $query="SELECT * FROM users WHERE email = '" .$email."' AND pass='".$password."'";
-                    $some = $pdo->query($query);
-                    while($smg = $some->fetch()){
-                        $dbname = $smg['first_name'];
-                        $dbemail = $smg['email'];
+                    $query="SELECT * FROM users WHERE email = '" .$email."' AND pass='".$password."'";// В $query присваиваем результат запросы выборки
+                    $some = $pdo->query($query); // В $some присваиваем массив из функции $pdo->query //Выбрать все из таблицы users где в колонке email
+                                                 //которая выполняет запрос к подключенной БД          //значение равно $email и pass тоже самое
+                    while($smg = $some->fetch()){  //Пока $smg, в которой функция извлечения строки из результирующего набора, true     
+                        $dbname = $smg['first_name']; //$dbname присваиваем значение из этого запроса
+                        $dbemail = $smg['email']; 
                         $dbpass = $smg['pass'];
                     }
-                    if ($email == $dbemail && $password == $dbpass && ($checking or !isset($checking))) {
-                        $_SESSION['session_name'] = $dbname;
+                    // Если данные из полей совпадают с данными из БД и была пройдена кепшка (или не установлена кепшка)
+                    if ($email == $dbemail && $password == $dbpass && ($checking or !isset($checking))) { 
+                        $_SESSION['session_name'] = $dbname; //В сессионное имя присваиваем имя из бд
                         $_SESSION['session_email'] = $email;
-                        $_SESSION['countTrying'] = 0;
-                        header("Location: userpage.php");
+                        $_SESSION['countTrying'] = 0; //Обнуляется счетчик неправильных вводов
+                        header("Location: userpage.php"); //Переход на страницу userpage.php (где уже работаем с сессионными переменными)
                     } else {
                     echo "Неправильные логин или пароль";
-                    $_SESSION['countTrying']++;
+                    $_SESSION['countTrying']++; //Добавить +1 к счетчку неправильных вводов
                     echo " Количество попыток входа: " . $_SESSION['countTrying'];
                     }
                 } else {
